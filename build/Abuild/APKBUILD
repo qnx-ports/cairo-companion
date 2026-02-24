@@ -1,0 +1,77 @@
+pkgname=cairo
+pkgver=1.18.4
+pkgrel=0
+pkgdesc="A vector graphics library"
+url="https://cairographics.org/"
+arch="all"
+options="!check"
+license="LGPL-2.1-or-later OR MPL-1.1"
+depends_dev="
+    fontconfig-dev
+    freetype-dev
+    pixman-dev
+    "
+makedepends="
+    $depends_dev
+    meson
+    ninja
+    pkgconf
+    pkgconf-dev
+    expat-dev
+    glib-dev
+    libpng-dev
+    zlib-ng-dev
+    "
+depends="
+        fontconfig
+        freetype
+        pixman
+        glib
+	zlib-ng
+        "
+
+subpackages="
+    $pkgname-static
+    $pkgname-dev
+    $pkgname-gobject
+    "
+source="https://gitlab.freedesktop.org/cairo/cairo/-/archive/$pkgver/cairo-$pkgver.tar.bz2"
+
+build() {
+    meson setup build \
+        -Db_lto=true \
+        -Dc_args=-DHAVE_CTIME_R \
+        -Dc_link_args=-Wl,-lm \
+        -Dtests=disabled \
+        -Dzlib=enabled \
+        -Dfontconfig=enabled \
+        -Dfreetype=enabled \
+        -Dglib=enabled \
+        -Dpng=enabled \
+        -Ddefault_library=both \
+        --reconfigure \
+        --buildtype=release \
+        --prefix=/usr
+                
+
+    ninja -C build
+}
+
+check() {
+    meson test -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C "$builddir"/build install
+}
+
+gobject() {
+    pkgdesc="$pkgdesc (gobject bindings)"
+
+    amove usr/lib/libcairo-gobject.so.*
+}
+
+
+sha512sums="
+27b98a17510b4d6f0187fcb280fea1b47ae31243f6999081a7ac94f8cf3c789c05fa6eb0fe65844808ef9ac11bcd29a4c3688c871a6950d888667840385acf9b  cairo-1.18.4.tar.bz2
+"
