@@ -1,6 +1,6 @@
 pkgname=cairo
 pkgver=1.18.4
-pkgrel=0
+pkgrel=${pkgrel:-0}
 pkgdesc="A vector graphics library"
 url="https://cairographics.org/"
 arch="all"
@@ -72,6 +72,7 @@ gobject() {
 }
 
 
+options="$options ${DISABLE_CHECK:+!check}"
 sha512sums="
 27b98a17510b4d6f0187fcb280fea1b47ae31243f6999081a7ac94f8cf3c789c05fa6eb0fe65844808ef9ac11bcd29a4c3688c871a6950d888667840385acf9b  cairo-1.18.4.tar.bz2
 "
